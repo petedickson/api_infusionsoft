@@ -44,6 +44,10 @@ module ApiInfusionsoft
       Thread.current[:api_conn] = InfusionsoftApiConnection.new(url, key)
     end
   end
+  
+  def md5_hash(string)
+    Digest::MD5.hexdigest(string)
+  end
 
   ########################
   ###  Email Service   ###
@@ -249,7 +253,8 @@ module ApiInfusionsoft
 
   def api_data_authenticate_user(username, password)
     # Authenticates a user account in Infusionsoft
-    Thread.current[:api_conn].api_perform('DataService', 'authenticateUser', username, password)
+    md5_password_hash = md5_hash(password)
+    Thread.current[:api_conn].api_perform('DataService', 'authenticateUser', username, md5_password_hash)
   end
 
   def api_data_echo(text)
